@@ -16,14 +16,18 @@ function App() {
 
   const CONTRACT_ID = "CCX4HEFCB4SJFG463AN2AC6C66MPKXRESVAI6YPHFNH4S63QRW476BLG";
 
-  const connectWallet = async () => {
+    const connectWallet = async () => {
     try {
-      if (await isConnected()) {
-        const access = await requestAccess();
-        setWalletAddress(access);
-        fetchImpactPoints(access);
-      } else {
-        alert("Please install the Freighter Wallet extension.");
+      // 1. Ask Freighter for permission
+      const response = await requestAccess();
+      
+      // 2. Extract the string safely (handles both older and newer Freighter versions)
+      const finalAddress = typeof response === 'string' ? response : response.address;
+      
+      if (finalAddress) {
+        setWalletAddress(finalAddress);
+        // 3. Optional: Fetch points if you have that function ready
+        // fetchImpactPoints(finalAddress); 
       }
     } catch (error) {
       console.error("Wallet connection failed:", error);
@@ -39,25 +43,45 @@ function App() {
     }
   };
 
-  const handleLogRecycling = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    try {
-      const tx = await contractClient.log_recycling({
-        admin: walletAddress,
-        resident: residentKey,
-        weight: Number(weight)
-      });
-      
-      await signTransaction(tx.built.toXDR(), { network: 'TESTNET' });
-      alert("Success. Plastic logged on-chain. Please refresh to see points.");
-    } catch (error) {
-      console.error(error);
-      alert("Failed to log transaction. Ensure you are an Admin.");
-    }
-    setLoading(false);
-  };
+  // Add this state variable at the top with your others if you don't have it:
+// const [isSubmitting, setIsSubmitting] = useState(false);
 
+const handleLogRecycling = async (e) => {
+    e.preventDefault(); // CRITICAL: Stops the page from refreshing when you click submit!
+
+    if (!walletAddress) {
+      alert("Please connect your Freighter wallet first.");
+      return;
+    }
+
+    try {
+      // 1. Make the UI responsive (using your existing 'loading' state)
+      setLoading(true);
+
+      // 2. Call the contract
+      // CRITICAL: We wrap the weight in Number() so Rust accepts the integer!
+      await contractClient.log_recycling({
+        admin: walletAddress,   // The connected wallet is the admin
+        resident: residentKey,  // The address from the text box
+        weight: Number(weight)  // Converts your string state to an integer
+      });
+
+      // 3. Success Feedback
+      alert("Success! Plastic logged on-chain.");
+      
+      // Optional: Clear the boxes after success
+      // setResidentKey('');
+      // setWeight('');
+
+    } catch (error) {
+      console.error("Transaction Error:", error);
+      alert("Transaction failed! Check the F12 console for exact details.");
+    } finally {
+      // 4. Reset the UI
+      setLoading(false);
+    }
+  };
+  
   return (
     <div className="min-h-screen p-8 font-sans text-gray-800 bg-green-50">
       <nav className="flex justify-between items-center mb-12 bg-white p-4 rounded-2xl shadow-sm border border-green-100">
@@ -68,7 +92,7 @@ function App() {
           onClick={connectWallet}
           className="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-6 rounded-full transition-all"
         >
-          {walletAddress ? `${walletAddress.substring(0, 6)}...${walletAddress.slice(-4)}` : "Connect Freighter"}
+          {walletAddress ? `${walletAddress?.substring(0, 6)}...${walletAddress.slice(-4)}` : "Connect Freighter"}
         </button>
       </nav>
 
