@@ -2,9 +2,14 @@ import { useState } from 'react';
 import { isConnected, requestAccess, signTransaction } from '@stellar/freighter-api';
 import { Client } from './greenproof-client';
 
+// 1. Put the Contract ID up here globally
+const CONTRACT_ID = "CCX4HEFCB4SJFG463AN2AC6C66MPKXRESVAI6YPHFNH4S63QRW476BLG";
+
+
 const contractClient = new Client({
   networkPassphrase: "Test SDF Network ; September 2015",
   rpcUrl: "https://soroban-testnet.stellar.org:443",
+  contractId: CONTRACT_ID,
 });
 
 function App() {
@@ -14,7 +19,6 @@ function App() {
   const [residentKey, setResidentKey] = useState('');
   const [weight, setWeight] = useState('');
 
-  const CONTRACT_ID = "CCX4HEFCB4SJFG463AN2AC6C66MPKXRESVAI6YPHFNH4S63QRW476BLG";
 
     const connectWallet = async () => {
     try {
@@ -81,7 +85,37 @@ const handleLogRecycling = async (e) => {
       setLoading(false);
     }
   };
-  
+
+  const handleSendReward = async (e) => {
+    e.preventDefault();
+    if (!walletAddress || !residentKey) {
+      alert("Please connect wallet and enter a Resident Public Key.");
+      return;
+    }
+
+    try {
+      setLoading(true);
+      // Official XLM token address on Testnet
+      const XLM_CONTRACT = "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC";
+
+      // Call your Rust claim_reward function
+      await contractClient.claim_reward({
+        admin: walletAddress,            // Your wallet (paying the XLM)
+        resident: residentKey,           // The resident getting the XLM
+        token_contract: XLM_CONTRACT,    // The XLM token ID
+        amount: BigInt(10000000)         // 1 XLM in stroops (requires BigInt)
+      });
+
+      alert("Awesome! 1 XLM Reward sent to the resident!");
+
+    } catch (error) {
+      console.error("Reward Error:", error);
+      alert("Failed to send reward. Check console.");
+    } finally {
+      setLoading(false);
+    }
+  }; 
+
   return (
     <div className="min-h-screen p-8 font-sans text-gray-800 bg-green-50">
       <nav className="flex justify-between items-center mb-12 bg-white p-4 rounded-2xl shadow-sm border border-green-100">
@@ -153,6 +187,13 @@ const handleLogRecycling = async (e) => {
               {loading ? "Awaiting Signature..." : "Log Plastic On-Chain"}
             </button>
           </form>
+          <button 
+            onClick={handleSendReward}
+            disabled={!walletAddress || loading}
+            className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 text-white font-bold py-4 rounded-xl transition-all mt-3"
+          >
+            {loading ? "Sending XLM..." : "Send 1 XLM Reward"}
+          </button>
           <div className="mt-6 p-4 bg-gray-50 rounded-xl">
             <p className="text-xs text-gray-500 break-all">
               <strong>Active Contract:</strong> <br/>
