@@ -108,6 +108,13 @@ Here is a glimpse of our deployed contract on Stellar.Expert, showing its succes
 
 ![Stellar.Expert Screenshot](images/stellar.expert)
 
+## User Interface
+![UI!](images/UI1.jpg)
+![UI!](images/UI2.jpg)
+![UI!](images/UI3.jpg)
+![UI!](images/UI4.jpg)
+![UI!](images/UI5.jpg)
+
 The Overview tab shows that the contract has been successfully instantiated. A clear timeline of transactions is visible below, detailing contract calls, creation events, and state changes. This overview provides verifiable proof of our live dApp on the Stellar network.
 
 We are excited about the potential of GreenProof PH to foster a cleaner, more resilient, and directly empowered community in Quezon City and beyond.
