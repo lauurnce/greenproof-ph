@@ -21,6 +21,8 @@ While the city provides garbage truck collection, it's a limited and rushed serv
 
 We cannot ignore the scale of this problem. According to official data from the Quezon City government's 10-Year Solid Waste Management Plan (2021-2030), the city generates approximately 2,500 metric tons of solid waste every single day. This volume demonstrates the immense strain on our environment and infrastructure.
 
+![Quezon City Challenge](images/quezon.city.stats.jpg)
+
 ### Daily Waste Generation Visualization
 
 To vividly illustrate this growing environmental pressure, imagine a clear upward trend in waste generation over the past several years:
@@ -86,21 +88,26 @@ Upload your contract WASM to the Stellar Testnet. (Replace my-key with your conf
 ```Bash
 stellar contract deploy --wasm target/wasm32-unknown-unknown/release/greenproof_ph.wasm --source my-key --network testnet
 ```
-
+### Step 4: Run the Frontend Locally
+To see the actual application live on your local host, navigate to the frontend directory, install the dependencies, and start the development server.
+```Bash
+cd greenproof_ph/frontend
+npm install
+npm run dev
+```
 🌐 Live Deployment Overview
 We are proud to have our initial smart contract successfully deployed to the Stellar Testnet.
 
 Network: Stellar Testnet
-
+```
 Contract ID: CCX4HEFCB4SJFG463AN2AC6C66MPKXRESVAI6YPHFNH4S63QRW476BLG
-
-Explorer Link: View on Stellar Expert
+```
+Explorer Link: [View on Stellar Expert](https://stellar.expert/explorer/testnet/contract/CCX4HEFCB4SJFG463AN2AC6C66MPKXRESVAI6YPHFNH4S63QRW476BLG)
 
 Here is a glimpse of our deployed contract on Stellar.Expert, showing its successful instantiation and ready status:
 
-![Mock Stellar.Expert Screenshot - Description Below]
+![Stellar.Expert Screenshot](images/stellar.expert)
 
-Stellar.Expert Live App Preview (Screenshot Description)
-This section contains a screenshot from the Stellar.Expert Testnet explorer page. The title "Contract CCX4H...76BLG" is prominently displayed, matching our deployed ID. The Overview tab shows that the contract has been successfully instantiated. A clear timeline of transactions is visible below, detailing contract calls, creation events, and state changes. This overview provides verifiable proof of our live dApp on the Stellar network.
+The Overview tab shows that the contract has been successfully instantiated. A clear timeline of transactions is visible below, detailing contract calls, creation events, and state changes. This overview provides verifiable proof of our live dApp on the Stellar network.
 
 We are excited about the potential of GreenProof PH to foster a cleaner, more resilient, and directly empowered community in Quezon City and beyond.
